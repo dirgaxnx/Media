@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lolipop Payment New</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Poppins:wght@300;400;600&display=swap');
+
+        :root {
+            --primary-color: #00ffff;
+            --secondary-color: #c084fc;
+            --accent-color: #9333ea;
+            --background-color: #0a001a;
+            --card-color: #1a0033;
+            --text-color: #f0f0f0; 
+            --shadow-neon: 0 0 10px rgba(0, 255, 255, 0.7);
+            --shadow-dark: rgba(0, 0, 0, 0.8);
+            --dana-color: #1E90FF;
+            --ovo-color: #4CAF50;
+            --gopay-color: #00AA13;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+        
+        #main-content {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--background-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid var(--card-color);
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            position: relative;
+        }
+
+        .spinner::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: var(--shadow-neon);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        #loading-screen p {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-color);
+            margin-top: 15px;
+            text-shadow: var(--shadow-neon);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            flex-grow: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        header {
+            background-color: var(--card-color);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px var(--shadow-dark);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .logo {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: var(--shadow-neon);
+        }
+
+        header nav {
+            width: auto;
+        }
+        
+        footer {
+            background-color: var(--card-color);
+            color: var(--text-color);
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid var(--primary-color);
+            box-shadow: 0 -4px 15px var(--shadow-dark);
+        }
+
+        #dashboard {
+            padding-top: 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; 
+            gap: 30px;
+        }
+
+        .dashboard-card {
+            background-color: var(--card-color);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--accent-color);
+            position: relative;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+        }
+
+        .floating-profile {
+            grid-column: 1 / 4; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        /* CSS UNTUK VIDEO PROFIL BULAT & BERDENYUT (Ganti dari .profile-photo) */
+        .profile-video {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 5px solid var(--primary-color);
+            box-shadow: 0 0 30px var(--primary-color);
+            object-fit: cover; /* Penting agar video mengisi lingkaran tanpa distorsi */
+            animation: pulse-neon 2s infinite alternate; 
+        }
+
+        @keyframes pulse-neon {
+            0% {
+                box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+                transform: scale(1);
+            }
+            100% {
+                box-shadow: 0 0 20px var(--primary-color), 0 0 40px var(--primary-color);
+                transform: scale(1.02);
+            }
+        }
+        /* AKHIR CSS FOTO PROFIL */
+
+        .welcome-text {
+            color: var(--primary-color);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            margin-top: 15px;
+            text-shadow: var(--shadow-neon);
+        }
+
+        .social-box, .about-me-box {
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .social-links a, .about-me-box .icon, .chat-box .icon {
+            color: var(--primary-color);
+        }
+        
+        .social-links a:hover {
+            color: var(--secondary-color);
+        }
+
+        .chat-box {
+            border-left: 5px solid var(--secondary-color);
+            text-align: center;
+        }
+
+        .chat-box h3 {
+            color: var(--secondary-color);
+        }
+        
+        .chat-box input[type="text"], .chat-box textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: var(--background-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 5px;
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .chat-box input:focus, .chat-box textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px var(--primary-color);
+        }
+
+        .cta-button, .wallet-btn, .action-buttons button, .action-buttons a, .chat-box button[type="submit"] {
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        @keyframes click-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.98); }
+            100% { transform: scale(1); }
+        }
+
+        .pulsed {
+            animation: click-pulse 0.3s ease-out;
+        }
+
+        .chat-box button[type="submit"] {
+            background-color: var(--secondary-color);
+            color: var(--background-color);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .chat-box button[type="submit"]:hover {
+            background-color: var(--primary-color);
+        }
+        
+        #chat-status {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: var(--primary-color);
+            min-height: 20px; 
+        }
+
+        .cta-button {
+            grid-column: 1 / 4; 
+            background-color: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.6);
+        }
+
+        .cta-button:hover {
+            background-color: #00cccc;
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.8);
+        }
+        
+        .payment-area h1 {
+            color: var(--primary-color);
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: var(--shadow-neon);
+        }
+
+        .wallet-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .wallet-btn {
+            background-color: var(--card-color);
+            color: var(--text-color);
+            padding: 15px 30px;
+            border: 2px solid var(--accent-color); 
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 0 10px rgba(147, 51, 234, 0.3); 
+        }
+
+        .wallet-btn:hover {
+            border-color: var(--primary-color); 
+            box-shadow: 0 0 15px var(--primary-color); 
+            color: var(--primary-color); 
+        }
+
+        .wallet-btn.active {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 255, 255, 0.1); 
+            color: var(--primary-color);
+            box-shadow: 0 0 20px var(--primary-color);
+        }
+
+        .qris-box {
+            margin-top: 40px;
+            padding: 30px;
+            background-color: var(--card-color);
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+            border: 1px solid var(--primary-color);
+        }
+        .qris-img {
+            max-width: 100%;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            border-radius: 8px;
+            object-fit: contain;
+            border: 5px solid var(--primary-color);
+            box-shadow: 0 0 20px var(--primary-color);
+        }
+        
+        .wallet-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-shadow: 0 0 5px var(--primary-color);
+        }
+        
+        .wallet-info {
+            margin-top: 15px;
+            background-color: rgba(0, 255, 255, 0.05); 
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .action-buttons button, .action-buttons a {
+            background-color: transparent; 
+            color: var(--primary-color); 
+            border: 2px solid var(--primary-color); 
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-buttons button:hover, .action-buttons a:hover {
+            background-color: var(--primary-color); 
+            color: var(--background-color); 
+            box-shadow: 0 0 15px var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+
+        @media (max-width: 900px) {
+            #dashboard {
+                grid-template-columns: 1fr; 
+            }
+            
+            .floating-profile, .cta-button, .social-box, .about-me-box, .chat-box {
+                grid-column: 1 / 2;
+            }
+            .dashboard-card {
+                margin-bottom: 20px;
+            }
+            .wallet-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .wallet-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <p>INITIATING PAYMENT PROTOCOL...</p>
+    </div>
+
+    <div id="main-content" class="hidden">
+        
+        <header>
+            <div class="logo">Welcome Brother (⸙)</div>
+            <nav>
+                </nav>
+        </header>
+
+        <section id="dashboard" class="container">
+            <div class="dashboard-card floating-profile">
+                <div class="profile-photo-container">
+                    <video id="pulsing-video" 
+                           class="profile-video" 
+                           loop autoplay muted 
+                           src="https://github.com/dirgaxnx/LolipopPost/raw/refs/heads/main/VID_20251126_095720_057.mp4" 
+                           poster="https://via.placeholder.com/160/0a001a/00ffff?text=LOLIPOP"
+                           aria-label="Lolipop Profile Animation">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <h2 class="welcome-text">LOLIPOP PAYMENT</h2>
+            </div>
+
+            <div class="dashboard-card social-box">
+                <i class="fas fa-satellite-dish icon fa-2x"></i>
+                <h3>Social Hub</h3>
+                <div class="social-links">
+                    <a href="https://github.com/dirgaxnx" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="https://t.me/Popyeyeye" target="_blank" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card about-me-box">
+                <i class="fas fa-server icon fa-2x"></i>
+                <h3>System Status</h3>
+                <p>Gateway digital berteknologi tinggi untuk transaksi 24/7. Mengutamakan kecepatan dan keamanan data Anda.</p>
+                <p>Versi: Core v2.1.0 | Status: Online</p>
+            </div>
+            
+            <div class="dashboard-card chat-box">
+                <i class="fas fa-headset icon fa-2x"></i>
+                <h3>Chat Developer</h3>
+                <form id="telegram-chat-form">
+                    <input type="text" id="telegram-username" placeholder="@Username Telegram Anda" required>
+                    <textarea id="telegram-message" placeholder="Pesan untuk Developer..." rows="4" required></textarea>
+                    <button type="submit" class="pulsable-btn"><i class="fas fa-paper-plane"></i> Kirim ke Telegram</button>
+                    <p id="chat-status"></p>
+                </form>
+            </div>
+
+            <button class="cta-button pulsable-btn" onclick="document.getElementById('payment-section').scrollIntoView({ behavior: 'smooth' });">
+                <i class="fas fa-credit-card"></i> INITIATE PAYMENT
+            </button>
+
+        </section>
+
+        <section id="payment-section" class="container payment-area">
+            <h1>SELECT PAYMENT</h1>
+            <div class="wallet-buttons">
+                <button class="wallet-btn pulsable-btn" data-wallet="dana"><i class="fas fa-wallet" style="color: var(--dana-color);"></i> DANA</button>
+                <button class="wallet-btn pulsable-btn" data-wallet="ovo"><i class="fas fa-wallet" style="color: var(--ovo-color);"></i> OVO</button>
+                <button class="wallet-btn pulsable-btn" data-wallet="gopay"><i class="fas fa-wallet" style="color: var(--gopay-color);"></i> GOPAY</button>
+            </div>
+
+            <div id="qris-display" class="qris-box hidden">
+                <h2 id="qris-title">SCAN QRIS : DATA FETCHED</h2>
+                
+                <div class="wallet-info">
+                    <p>Nomor Akun <span id="wallet-name-display"></span>:</p>
+                    <div class="wallet-number-container">
+                        <span id="wallet-number-display" class="wallet-number"></span>
+                    </div>
+                </div>
+
+                <img id="qris-image" src="https://via.placeholder.com/300x300/f8f9fa/343a40?text=Select+Channel" alt="QRIS Code" class="qris-img">
+                
+                <div class="action-buttons">
+                    <button id="copy-btn" class="pulsable-btn"><i class="fas fa-copy"></i> Copy Number</button>
+                    <a id="download-qr-btn" href="#" download="QRIS_Payment.png" class="pulsable-btn"><i class="fas fa-download"></i> Download QR</a>
+                </div>
+
+                <p class="qris-note">Validation Payment data is active.</p>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2025 - Lolipop | Secure Interface</p>
+        </footer>
+
+    </div>
+
+    <script>
+      
+        const BOT_TOKEN = '8582867972:AAGPd1PHox4GSTD0QKr3gTBw9Ob4LiRNqQ4';
+        const CHAT_ID = '2113286230';
+        
+        const walletData = {
+            dana: { 
+                number: '0895428357588', 
+                qris: 'https://via.placeholder.com/300x300/1E90FF/FFFFFF?text=QRIS+DANA+ASLI', 
+                name: 'DANA'
+            },
+            ovo: { 
+                number: '085098765432', 
+                qris: 'https://via.placeholder.com/300x300/4CAF50/FFFFFF?text=QRIS+OVO+ASLI', 
+                name: 'OVO'
+            },
+            gopay: { 
+                number: '0895328773790', 
+                qris: 'https://via.placeholder.com/300x300/00AA13/FFFFFF?text=QRIS+GOPAY+ASLI', 
+                name: 'GOPAY'
+            },
+        };
+
+        function applyPulseEffect(element) {
+            element.classList.remove('pulsed');
+            setTimeout(() => {
+                element.classList.add('pulsed');
+            }, 10);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            const mainContent = document.getElementById('main-content');
+            const pulsingVideo = document.getElementById('pulsing-video'); // Ganti dari pulsingPhoto ke pulsingVideo
+            const walletBtns = document.querySelectorAll('.wallet-btn');
+            const qrisDisplay = document.getElementById('qris-display');
+            const qrisImage = document.getElementById('qris-image');
+            const walletNameDisplay = document.getElementById('wallet-name-display');
+            const walletNumberDisplay = document.getElementById('wallet-number-display');
+            const copyBtn = document.getElementById('copy-btn');
+            const downloadQrBtn = document.getElementById('download-qr-btn');
+            const chatForm = document.getElementById('telegram-chat-form');
+            const chatStatus = document.getElementById('chat-status');
+            const pulsableElements = document.querySelectorAll('.pulsable-btn');
+
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.remove();
+                    mainContent.classList.remove('hidden');
+                }, 500); 
+            }, 2000);
+
+            pulsableElements.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    applyPulseEffect(btn);
+                });
+            });
+            
+            // Logika fallback untuk video profil jika gagal dimuat
+            if (pulsingVideo) {
+                pulsingVideo.onerror = function() {
+                    this.style.display = 'none'; // Sembunyikan video
+                    // Anda bisa menambahkan elemen fallback gambar jika mau
+                };
+            }
+            
+            walletBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    applyPulseEffect(btn);
+                    
+                    const walletKey = btn.getAttribute('data-wallet');
+                    const data = walletData[walletKey];
+                    
+                    walletBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    document.getElementById('qris-title').textContent = `SCAN QRIS: ${data.name} PROTOCOL`;
+                    qrisImage.src = data.qris;
+                    walletNameDisplay.textContent = data.name;
+                    walletNumberDisplay.textContent = data.number;
+
+                    downloadQrBtn.setAttribute('href', data.qris);
+                    downloadQrBtn.setAttribute('download', `QRIS_${data.name}.png`);
+                    
+                    if (qrisDisplay.classList.contains('hidden')) {
+                        qrisDisplay.classList.remove('hidden');
+                    }
+                });
+            });
+
+            if (copyBtn) {
+                copyBtn.addEventListener('click', () => {
+                    applyPulseEffect(copyBtn);
+                    const textToCopy = walletNumberDisplay.textContent;
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(textToCopy).then(() => {
+                            copyBtn.innerHTML = '<i class="fas fa-check-circle"></i> Tersalin!';
+                            setTimeout(() => {
+                                copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Number';
+                            }, 1500);
+                        });
+                    }
+                });
+            }
+
+            if (chatForm) {
+                chatForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const username = document.getElementById('telegram-username').value;
+                    const message = document.getElementById('telegram-message').value;
+
+                    chatStatus.innerHTML = '<i class="fas fa-sync fa-spin"></i> Sending data...';
+                    
+                    const apiURL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                    
+                    const formattedMessage = `📩 *Pesan Baru dari Website* 📩\n--------------------------------------\nUsername Telegram: \`${username}\`\nPesan:\n_${message}_\n--------------------------------------`;
+
+                    const formData = {
+                        chat_id: CHAT_ID,
+                        text: formattedMessage,
+                        parse_mode: 'Markdown'
+                    };
+
+                    fetch(apiURL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.ok) {
+                            chatStatus.innerHTML = '<i class="fas fa-check-circle"></i> Message Sent Successfully!';
+                            chatForm.reset();
+                        } else {
+                            chatStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error: ${data.description || 'Gagal mengirim pesan.'}`;
+                        }
+                        setTimeout(() => { chatStatus.textContent = ''; }, 5000);
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        chatStatus.innerHTML = '<i class="fas fa-times-circle"></i> Connection Error. Cek konfigurasi Token/ID.';
+                        setTimeout(() => { chatStatus.textContent = ''; }, 5000);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
