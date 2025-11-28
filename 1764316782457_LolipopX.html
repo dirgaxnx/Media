@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lolipop Portfolio</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+    --bg-color: #111;
+    --primary-color: #0ff;
+    --text-color: #fff;
+    --accent-dark: rgba(0, 255, 255, 0.1);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background:var(--bg-color); color:var(--text-color); overflow-x:hidden; position:relative; line-height:1.6; }
+
+body::before {
+    content:""; position:fixed; top:0; left:0; width:100%; height:100%;
+    background-image: linear-gradient(var(--primary-color) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--primary-color) 1px, transparent 1px);
+    background-size:40px 40px;
+    opacity:0.07;
+    animation: moveGrid 30s linear infinite;
+    z-index:-1;
+}
+@keyframes moveGrid {
+    0% { background-position: 0 0, 0 0; }
+    100% { background-position: 400px 400px, 400px 400px; }
+}
+
+.hero {
+    height: 85vh;
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    text-align:center; padding: 40px 20px;
+    position:relative;
+}
+.profile-container {
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 0 50px var(--primary-color);
+    animation: pulseGlow 1.5s ease-in-out infinite alternate;
+    padding: 5px;
+}
+.profile-img {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    object-fit:cover;
+}
+.hero h1 { margin-top:15px; font-size:2.8rem; color:var(--primary-color); text-shadow: 0 0 10px var(--primary-color); }
+.hero .subtitle { font-size:1.2rem; color: #aaa; margin-top: 5px; }
+
+@keyframes pulseGlow {
+    from { box-shadow: 0 0 30px var(--primary-color), 0 0 10px rgba(0, 255, 255, 0.5); }
+    to { box-shadow: 0 0 60px var(--primary-color), 0 0 20px rgba(0, 255, 255, 0.8); }
+}
+
+.floating-menu-btn {
+    position: fixed;
+    top: 20px; right: 20px;
+    width: 55px; height: 55px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: var(--bg-color);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    box-shadow: 0 0 15px var(--primary-color);
+    font-size:1.8rem;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    border: none;
+}
+.floating-menu-btn:hover { transform:scale(1.1); box-shadow: 0 0 30px var(--primary-color); }
+
+.floating-cards {
+    position: fixed;
+    top: 90px; right: 20px;
+    display:flex; flex-direction:column; gap:10px;
+    opacity:0; pointer-events:none;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 999;
+}
+.floating-cards.show { opacity:1; pointer-events:auto; transform: translateX(0); }
+.floating-cards:not(.show) { transform: translateX(100px); }
+
+.card-btn {
+    background:var(--accent-dark);
+    border:2px solid var(--primary-color);
+    border-radius:10px;
+    padding:10px 15px;
+    display:flex; flex-direction:row; align-items:center; justify-content:flex-start;
+    cursor:pointer; color:var(--primary-color); font-weight:bold;
+    transition:0.3s;
+    width:150px;
+    text-decoration: none;
+}
+.card-btn:hover { background:var(--primary-color); color:var(--bg-color); transform:scale(1.05); box-shadow:0 0 15px var(--primary-color); }
+.card-btn i { font-size:1.2rem; margin-right:10px; }
+
+
+section {
+    padding:60px 20px;
+    min-height:50vh;
+    opacity:0; transform:translateY(50px);
+    transition: all 0.8s ease;
+}
+section.show { opacity:1; transform:translateY(0); }
+
+.neon-box {
+    max-width: 900px;
+    margin: 40px auto;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid var(--primary-color);
+    box-shadow: 0 0 30px var(--primary-color);
+}
+
+h2 {
+    color:var(--primary-color);
+    margin-bottom:25px;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 5px;
+    display: inline-block;
+    text-shadow: 0 0 5px var(--primary-color);
+    font-size: 2rem;
+}
+
+.skills-grid {
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:30px;
+}
+.skill-item {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px; border-radius:8px;
+    background: rgba(255,255,255,0.05);
+    border-left: 5px solid var(--primary-color);
+    cursor:pointer;
+    transition: all 0.3s ease;
+}
+.skill-item:hover { transform: translateY(-5px); background: rgba(255,255,255,0.1); box-shadow: 0 10px 20px rgba(0, 255, 255, 0.2); }
+
+.skill-name { font-size:1.1rem; display:flex; align-items:center; gap:8px; color: var(--primary-color); }
+.skill-name i { font-size:1.5rem; }
+
+.skill-bar {
+    flex:1; height:18px;
+    background: rgba(255,255,255,0.1);
+    margin-left:20px; border-radius:10px;
+    overflow:hidden; position:relative;
+}
+.skill-bar-inner {
+    height:100%; width:0%;
+    border-radius:10px;
+    background: linear-gradient(90deg, #0ff, #0088ff);
+    box-shadow:0 0 10px var(--primary-color);
+    transition: width 1s ease-in-out;
+    position:relative;
+}
+.skill-bar-inner span {
+    position: absolute; right: 5px; top: -2px;
+    color: var(--bg-color); font-weight: bold;
+    font-size: 0.75rem;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+.project-card {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--primary-color);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.project-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px var(--primary-color); }
+.project-card h3 { color: var(--primary-color); margin-bottom: 10px; font-size: 1.4rem; }
+.project-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 15px;
+    transition: color 0.3s;
+}
+.project-link:hover { color: #fff; }
+
+.utility-box {
+    padding: 20px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+}
+.utility-box input[type=text], .utility-box input[type=file] {
+    padding:10px; border-radius:8px; border:1px solid var(--primary-color);
+    background:#222; color:var(--primary-color);
+    width:100%; margin-bottom:15px;
+    box-shadow: inset 0 0 5px rgba(0, 255, 255, 0.5);
+}
+.utility-buttons button {
+    padding: 10px 18px; border-radius:8px; border:none;
+    background:var(--primary-color); color:var(--bg-color);
+    cursor:pointer; margin-right:10px;
+    transition: all 0.3s; font-weight: bold;
+}
+.utility-buttons button:hover { background:#fff; color:var(--bg-color); transform:scale(1.05); box-shadow:0 0 10px var(--primary-color); }
+
+.result-display {
+    margin-top:20px;
+    padding:15px;
+    border: 1px dashed var(--primary-color);
+    border-radius: 8px;
+    background: rgba(0, 255, 255, 0.05);
+    word-wrap: break-word;
+}
+.result-display a { color: var(--primary-color); }
+
+.result-display button {
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: none;
+    background: var(--primary-color);
+    color: var(--bg-color);
+    cursor: pointer;
+    margin: 5px 8px 5px 0;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+.result-display button:hover {
+    background: #fff;
+    color: var(--bg-color);
+    transform: scale(1.05);
+    box-shadow: 0 0 8px var(--primary-color);
+}
+
+
+#popup {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.9);
+    display:none; justify-content:center; align-items:center; z-index:2000;
+    backdrop-filter: blur(5px);
+}
+#popup .content {
+    background:var(--bg-color); padding:30px; border-radius:15px;
+    text-align:center; color:var(--primary-color);
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 40px var(--primary-color);
+}
+.fa-spin { animation:fa-spin 1.5s linear infinite; }
+
+
+footer {
+    text-align: center;
+    padding: 20px;
+    border-top: 1px solid rgba(0, 255, 255, 0.2);
+    font-size: 0.9rem;
+    color: #aaa;
+}
+footer .fa-heart { margin: 0 5px; }
+
+
+@media (max-width: 768px) {
+    .hero h1 { font-size: 2.2rem; }
+    .hero .subtitle { font-size: 1rem; }
+    .floating-cards { width: auto; right: 5px; top: 70px; }
+    .floating-menu-btn { top: 10px; right: 10px; width: 45px; height: 45px; font-size: 1.4rem; }
+    .card-btn { width: 130px; }
+    .neon-box { margin: 20px auto; padding: 20px; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .skill-bar { margin-left: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div id="popup"><div class="content" id="popupContent"><i class="fas fa-cog fa-spin fa-3x"></i><p>Loading...</p></div></div>
+
+<header class="hero">
+    <div class="profile-container">
+        <img src="https://i.pravatar.cc/150?img=3" alt="Profile" class="profile-img">
+    </div>
+    <h1>I'm Lolipop</h1>
+    <p class="subtitle">⸙ 2025 Lolipop | Secure Interface</p>
+    
+    <button class="floating-menu-btn" onclick="toggleFloatingCards()" aria-label="Toggle Menu">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <nav class="floating-cards" id="floatingCards" aria-label="Main Navigation">
+        <a class="card-btn" href="#about-me"><i class="fas fa-user-tie"></i>About</a>
+        <a class="card-btn" href="#skills"><i class="fas fa-code"></i>Skills</a>
+        <a class="card-btn" href="#projects"><i class="fas fa-laptop-code"></i>Projects</a>
+        <a class="card-btn" href="https://github.com/usernamekamu" target="_blank"><i class="fab fa-github"></i>GitHub</a>
+        <a class="card-btn" href="mailto:example@domain.com"><i class="fas fa-envelope"></i>Email</a>
+    </nav>
+</header>
+
+<section id="about-me" class="neon-box">
+    <h2><i class="fas fa-user-tie"></i> About Me</h2>
+    <p>Halo! Saya Lolipop, seorang Anak Muda Nich dengan pengalaman lebih dari 5 tahun di bidang pengembangan web. Saya memiliki passion dalam membangun aplikasi yang efisien, skalabel, dan memiliki antarmuka pengguna yang menawan (UI/UX). Saya mahir dalam ekosistem **JavaScript (Node.js, React)** dan juga eksplorasi di bidang **Python (Django/Flask)**.</p>
+    <p>Di luar coding, saya suka membaca novel fiksi ilmiah dan melacak perkembangan teknologi terbaru. Saya selalu siap menghadapi tantangan baru dalam dunia digital!</p>
+</section>
+
+<section id="skills" class="neon-box">
+    <h2><i class="fas fa-code"></i> Core Skills</h2>
+    <div class="skills-grid">
+        <div class="skill-item">
+            <span class="skill-name"><i class="fab fa-js-square"></i> JavaScript</span>
+            <div class="skill-bar"><div class="skill-bar-inner" data-percent="90%"><span>90%</span></div></div>
+        </div>
+        <div class="skill-item">
+            <span class="skill-name"><i class="fab fa-python"></i> Python</span>
+            <div class="skill-bar"><div class="skill-bar-inner" data-percent="80%"><span>80%</span></div></div>
+        </div>
+        <div class="skill-item">
+            <span class="skill-name"><i class="fab fa-html5"></i> HTML5</span>
+            <div class="skill-bar"><div class="skill-bar-inner" data-percent="95%"><span>95%</span></div></div>
+        </div>
+        <div class="skill-item">
+            <span class="skill-name"><i class="fab fa-css3-alt"></i> CSS3</span>
+            <div class="skill-bar"><div class="skill-bar-inner" data-percent="85%"><span>85%</span></div></div>
+        </div>
+    </div>
+</section>
+
+<section id="projects" class="neon-box">
+    <h2><i class="fas fa-laptop-code"></i> Featured Projects</h2>
+    <div class="projects-grid">
+        <div class="project-card">
+            <h3>Cyber-Aura OS</h3>
+            <p>Sistem operasi web-based yang terinspirasi dari antarmuka masa depan. Dibangun dengan React dan Redux.</p>
+            <a href="#" target="_blank" class="project-link"><i class="fas fa-external-link-alt"></i> View Demo</a>
+        </div>
+        <div class="project-card">
+            <h3>Neural-Net Blog</h3>
+            <p>Platform blogging yang didukung oleh API berbasis Python (Django). Fokus pada kecepatan dan SEO.</p>
+            <a href="#" target="_blank" class="project-link"><i class="fas fa-external-link-alt"></i> View Demo</a>
+        </div>
+        <div class="project-card">
+            <h3>Data Visualizer</h3>
+            <p>Alat interaktif untuk memvisualisasikan data real-time menggunakan D3.js dan Node.js.</p>
+            <a href="#" target="_blank" class="project-link"><i class="fas fa-external-link-alt"></i> View Demo</a>
+        </div>
+    </div>
+</section>
+
+<section id="ipTracking" class="neon-box">
+    <h2><i class="fas fa-map-marker-alt"></i> IP Tracker Utility</h2>
+    <div class="utility-box ip-box">
+        <input type="text" id="ipInput" placeholder="Enter IP address (e.g., 8.8.8.8)">
+        <div class="utility-buttons">
+            <button onclick="trackIP()"><i class="fas fa-search"></i> Track IP</button>
+            <button onclick="document.getElementById('ipInput').value='8.8.8.8'"><i class="fas fa-lightbulb"></i> Example</button>
+            <button onclick="document.getElementById('ipResult').innerHTML=''">Clear</button>
+        </div>
+        <div id="ipResult" class="result-display"></div>
+    </div>
+</section>
+
+<section id="deployVercel" class="neon-box">
+    <h2><i class="fas fa-cloud-upload-alt"></i> Vercel Deploy Utility</h2>
+    <div class="utility-box deploy-box">
+        <input type="text" id="deployProject" placeholder="Project name (lowercase)">
+        <input type="file" id="deployFile">
+        <div class="utility-buttons">
+            <button onclick="deployProject()"><i class="fas fa-rocket"></i> Let's Go</button>
+            <button onclick="document.getElementById('deployProject').value='my-neon-app';"><i class="fas fa-lightbulb"></i> Example</button>
+            <button onclick="document.getElementById('deployResult').innerHTML=''">Clear</button>
+        </div>
+        <div id="deployResult" class="result-display"></div>
+    </div>
+</section>
+
+<footer>
+    <p>© 2025 Lolipop. Coded with <i class="fas fa-gun" style="color:#f00;"></i> in the Digital Realm.</p>
+</footer>
+
+<script>
+
+function toggleFloatingCards() {
+    document.getElementById('floatingCards').classList.toggle('show');
+}
+
+function showPopup(text) {
+    const p = document.getElementById("popup");
+    p.style.display = "flex";
+    p.querySelector("p").innerText = text;
+}
+function hidePopup() {
+    document.getElementById("popup").style.display = "none";
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('show');
+                
+                if (entry.target.id === 'skills') {
+                    entry.target.querySelectorAll('.skill-bar-inner').forEach(bar => {
+                        bar.style.width = bar.getAttribute('data-percent');
+                    });
+                }
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('section').forEach(sec => {
+        observer.observe(sec);
+    });
+
+    document.querySelectorAll('.card-btn[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+            document.getElementById('floatingCards').classList.remove('show');
+        });
+    });
+});
+
+async function trackIP() {
+    const ip = document.getElementById("ipInput").value.trim();
+    const resultDiv = document.getElementById("ipResult");
+    resultDiv.innerHTML = ''; // Clear previous results
+    
+    if (!ip) {
+        resultDiv.innerHTML = '<p style="color: #f00;">IP address is required!</p>';
+        return;
+    }
+
+    showPopup("⸙ Searching IP Location...");
+    try {
+        const res = await fetch(`https://ipapi.co/${ip}/json/`);
+        const data = await res.json();
+        hidePopup();
+
+        if (data.error || !data.ip) {
+            resultDiv.innerHTML = `<p style="color: #f00;">Error: ${data.reason || 'IP not valid or API failed.'}</p>`;
+            return;
+        }
+
+        resultDiv.innerHTML = `
+            <p><strong>IP:</strong> ${data.ip}<br>
+            <strong>City:</strong> ${data.city || 'N/A'}<br>
+            <strong>Region:</strong> ${data.region || 'N/A'}<br>
+            <strong>Country:</strong> ${data.country_name || 'N/A'} (${data.country_code || 'N/A'})<br>
+            <strong>ISP:</strong> ${data.org || 'N/A'}</p>
+            <div style="margin-top: 10px;">
+                <button onclick="window.open('https://maps.google.com/maps?q=${data.latitude},${data.longitude}','_blank')">
+                    <i class="fas fa-map-marked-alt"></i> Open Map
+                </button>
+                <button onclick="document.getElementById('ipResult').innerHTML=''">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        `;
+    } catch (e) {
+        hidePopup();
+        resultDiv.innerHTML = "<p style='color: #f00;'>Error connecting to IP Tracking API.</p>";
+        console.error("IP Tracking Error:", e);
+    }
+}
+
+async function deployProject() {
+    const project = document.getElementById("deployProject").value.trim();
+    const fileInput = document.getElementById("deployFile");
+    const resultDiv = document.getElementById("deployResult");
+    resultDiv.innerHTML = '';
+
+    if (!project || !/^[a-z0-9\-]+$/.test(project)) {
+        resultDiv.innerHTML = '<p style="color: #f00;">Invalid project name. Use only lowercase letters, numbers, and hyphens.</p>';
+        return;
+    }
+    if (!fileInput.files[0]) {
+        resultDiv.innerHTML = '<p style="color: #f00;">Please select index.html file to deploy.</p>';
+        return;
+    }
+
+    const file = fileInput.files[0];
+    if (file.name !== "index.html") {
+        resultDiv.innerHTML = '<p style="color: #f00;">File must be named "index.html" for a quick static deploy.</p>';
+        return;
+    }
+
+    showPopup("🚀 Initializing Deployment To Vercel...");
+    
+    const token = "VERCEL_API_TOKEN"; // <-- GANTI DENGAN TOKEN ASLI ANDA
+    
+    alert("⚠️ PERINGATAN KEAMANAN KRITIS: API Token Vercel diekspos di frontend! Segera pindahkan operasi deploy ini ke backend/serverless function untuk keamanan.");
+
+    try {
+        const fileData = await file.text();
+        
+        const base64Data = btoa(fileData); 
+        
+        const res = await fetch("https://api.vercel.com/v13/deployments", {
+            method: "POST",
+            headers: { 
+                "Authorization": `Bearer ${token}`, 
+                "Content-Type": "application/json" 
+            },
+            body: JSON.stringify({ 
+                name: project, 
+                files: [{ file: "index.html", data: base64Data }], // Menggunakan data base64
+                target: "production" 
+            })
+        });
+
+        const data = await res.json();
+        hidePopup();
+
+        if (data.error) {
+             resultDiv.innerHTML = `<p style="color: #f00;">Deployment Error: ${data.error.message || 'Unknown error.'}</p>`;
+             return;
+        }
+
+        resultDiv.innerHTML = `
+            <p>Project deployed!</p>
+            <p><strong>Project Name:</strong> ${data.name}</p>
+            <p><strong>URL:</strong> <a href="https://${data.url}" target="_blank">https://${data.url}</a></p>
+            <div style="margin-top: 10px;">
+                <button onclick="navigator.clipboard.writeText('https://${data.url}')">
+                    <i class="fas fa-copy"></i> Copy URL
+                </button>
+                <button onclick="document.getElementById('deployResult').innerHTML=''">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        `;
+    } catch (e) {
+        hidePopup();
+        resultDiv.innerHTML = "<p style='color: #f00;'>Error connecting to Vercel API. Check token and console for details.</p>";
+        console.error("Vercel Deploy Error:", e);
+    }
+}
+</script>
+</body>
+</html>
